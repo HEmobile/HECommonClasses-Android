@@ -12,17 +12,20 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.TextView;
 
-public class MyApplication extends Application {
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
+public abstract class HEApplication extends Application {
     private static boolean isWifiConnected;
 
     private static boolean isMobileConnected;
 
     private static boolean appBlocked = false;
 
-    private static MyApplication instance;
+    private static HEApplication instance;
 
-    public static MyApplication getInstance() {
+    public static HEApplication getInstance() {
         return instance;
     }
 
@@ -86,7 +89,7 @@ public class MyApplication extends Application {
     }
 
     public static void setAppBlocked(boolean block) {
-        MyApplication.appBlocked = block;
+        HEApplication.appBlocked = block;
     }
 
     public static boolean isAppBlocked() {
@@ -111,7 +114,27 @@ public class MyApplication extends Application {
         }
     };
 
-    public static String getAppName() {
-        return "HE_Mobile";
+    private static Tracker tracker;
+
+    synchronized public static Tracker getTracker() {
+        if (tracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(instance);
+            tracker = analytics.newTracker(instance.getAnalyticsResource());
+            tracker.enableAutoActivityTracking(true);
+        }
+        return tracker;
     }
+
+    public static void sendAnalyticsEvent(String category, String action, String label, long value) {
+        Tracker t = getTracker();
+        t.send(new HitBuilders.EventBuilder().setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .setValue(value)
+                .build());
+    }
+
+    public abstract String getAppName();
+
+    public abstract int getAnalyticsResource();
 }

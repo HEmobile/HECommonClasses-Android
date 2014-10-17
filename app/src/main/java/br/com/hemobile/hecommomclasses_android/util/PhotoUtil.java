@@ -22,13 +22,13 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import br.com.hemobile.hecommomclasses_android.MyApplication;
+import br.com.hemobile.hecommomclasses_android.HEApplication;
 
 
 public class PhotoUtil {
 
     public static final int PICK_IMAGE = 9;
-    private static final String PHOTO_DIR_NAME = MyApplication.getAppName();
+    private static final String PHOTO_DIR_NAME = HEApplication.getInstance().getAppName();
 
     public static Bitmap resizeBitmap(String pathName) {
         Options opts = new Options();

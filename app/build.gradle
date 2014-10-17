@@ -10,10 +10,10 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url:'file:///Users/pedrohenriqueborges/HeCommonClasses-Android-lib')
+            repository(url:'file:///Users/hemobile/Repository/Github/HECommonClasses-Android/HeCommonClasses-Android-lib')
             pom.groupId = 'br.com.hemobile.hecommomclasses-android'
             pom.artifactId = 'hecommomclasses-android'
-            pom.version = '1.0.1'
+            pom.version = '1.1.0'
         }
     }
 }
@@ -42,6 +42,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     apt "org.androidannotations:androidannotations:3.+"
     compile "org.androidannotations:androidannotations-api:3.+"
+    compile 'com.google.android.gms:play-services:6.1.+'
 }
 
 apt {

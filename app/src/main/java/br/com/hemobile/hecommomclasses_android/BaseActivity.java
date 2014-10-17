@@ -98,7 +98,7 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (MyApplication.isAppBlocked()) {
+        if (HEApplication.isAppBlocked()) {
             Toast.makeText(this, "Sua conta foi bloqueada, contate o administrador.", Toast.LENGTH_LONG).show();
             finish();
         }
