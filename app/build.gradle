@@ -10,10 +10,10 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url:'file:///Users/hemobile/Repository/Github/HECommonClasses-Android/HeCommonClasses-Android-lib')
+            repository(url:'file:///Users/pedrohenriqueborges/HeCommonClasses-Android-lib')
             pom.groupId = 'br.com.hemobile.hecommomclasses-android'
             pom.artifactId = 'hecommomclasses-android'
-            pom.version = '1.1.0'
+            pom.version = '1.2.0'
         }
     }
 }
