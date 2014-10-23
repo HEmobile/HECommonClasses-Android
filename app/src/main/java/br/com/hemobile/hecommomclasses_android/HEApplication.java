@@ -10,11 +10,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import br.com.hemobile.hecommomclasses_android.error.ErrorDetails;
+import br.com.hemobile.hecommomclasses_android.error.HEExceptionHandler;
 
 public abstract class HEApplication extends Application {
     private static boolean isWifiConnected;
@@ -29,11 +34,15 @@ public abstract class HEApplication extends Application {
         return instance;
     }
 
+    private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
+    private static HEExceptionHandler uncaughtExceptionHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
         registerReceiver(mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         instance = this;
+        setupErrorHandler();
     }
 
     public static int dpToPixels(int dp) {
@@ -114,13 +123,57 @@ public abstract class HEApplication extends Application {
         }
     };
 
+    public static void setUncaughtExceptionHandler(HEExceptionHandler uncaughtExceptionHandler) {
+        HEApplication.uncaughtExceptionHandler = uncaughtExceptionHandler;
+    }
+
+    private void setupErrorHandler() {
+        if (defaultUncaughtExceptionHandler == null) {
+            defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        }
+
+        Thread.UncaughtExceptionHandler exceptionHandler = new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                StackTraceElement traceElement = throwable.getStackTrace()[0];
+
+                String firstLine = traceElement.getClassName() + ":" +  traceElement.getLineNumber();
+                String stackTrace = Log.getStackTraceString(throwable);
+                String threadDetails = thread.toString();
+                String cause = null;
+                try {
+                    cause = throwable.getCause().toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                ErrorDetails details = new ErrorDetails(firstLine, stackTrace, threadDetails, cause);
+
+                if (uncaughtExceptionHandler != null) {
+                    uncaughtExceptionHandler.onUncaughtException(throwable, details);
+                }
+
+                defaultUncaughtExceptionHandler.uncaughtException(thread, throwable);
+            }
+        };
+
+        try {
+            ExceptionReporter er = new ExceptionReporter(HEApplication.getTracker(), exceptionHandler, HEApplication.getInstance());
+            Thread.setDefaultUncaughtExceptionHandler(er);
+        } catch (Exception e) {
+            Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
+        }
+    }
+
     private static Tracker tracker;
 
     synchronized public static Tracker getTracker() {
         if (tracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(instance);
-            tracker = analytics.newTracker(instance.getAnalyticsResource());
-            tracker.enableAutoActivityTracking(true);
+            try {
+                GoogleAnalytics analytics = GoogleAnalytics.getInstance(instance);
+                tracker = analytics.newTracker(instance.getAnalyticsResource());
+                tracker.enableAutoActivityTracking(true);
+            } catch (Exception e) {}
         }
         return tracker;
     }
