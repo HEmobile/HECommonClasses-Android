@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">HeCommomClasses-Android</string>
     <string name="dialog_error_title">Erro</string>
     <string name="dialog_information_title">Informação</string>
 </resources>
