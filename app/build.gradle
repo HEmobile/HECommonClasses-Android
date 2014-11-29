@@ -13,7 +13,7 @@ uploadArchives {
             repository(url:'file:///Users/hemobile/Repository/Github/HECommonClasses-Android/HeCommonClasses-Android-lib')
             pom.groupId = 'br.com.hemobile.hecommomclasses-android'
             pom.artifactId = 'hecommomclasses-android'
-            pom.version = '1.2.1'
+            pom.version = '1.2.2'
         }
     }
 }
@@ -22,14 +22,6 @@ uploadArchives {
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
-
-    defaultConfig {
-        applicationId "br.com.hemobile.hecommomclasses_android"
-        minSdkVersion 14
-        targetSdkVersion 20
-        versionCode 1
-        versionName "1.0"
-    }
     buildTypes {
         release {
             runProguard false
