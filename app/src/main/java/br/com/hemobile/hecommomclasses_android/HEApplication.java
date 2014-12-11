@@ -40,7 +40,12 @@ public abstract class HEApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        registerReceiver(mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        try {
+            registerReceiver(mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        } catch (Exception e) {
+            Log.w("HEApplication","Não é possível monitorar o estado da internet");
+            e.printStackTrace();
+        }
         instance = this;
         setupErrorHandler();
     }
