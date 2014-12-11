@@ -1,5 +1,6 @@
 package br.com.hemobile.hecommomclasses_android;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,12 +41,8 @@ public abstract class HEApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        try {
+        if (checkCallingPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED)
             registerReceiver(mConnReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        } catch (Exception e) {
-            Log.w("HEApplication","Não é possível monitorar o estado da internet");
-            e.printStackTrace();
-        }
         instance = this;
         setupErrorHandler();
     }
